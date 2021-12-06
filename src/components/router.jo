@@ -1,0 +1,33 @@
+<div :id="id"></div>
+
+<script>
+import { afterRender } from '@elljo/runtime'
+
+const router = window.__elljo_router__
+
+if(!router) {
+  // TODO: Add better error
+  console.error("no router")
+}
+const id = Math.random().toString(36).substring(9)
+let currentRoute = null
+
+const routeChanged = (route) => {
+  if(currentRoute && currentRoute !== route) {
+    currentRoute.teardown()
+  }
+  if(route) {
+    currentRoute = route
+    window.__elljo__.mount(route.component, '#' + id)
+  }
+}
+
+router.addRouteChangedCallback(routeChanged)
+
+const initRoute = () => {
+  routeChanged(router.getRouteFromPath(document.location.pathname))
+}
+
+afterRender(initRoute)
+
+</script>
