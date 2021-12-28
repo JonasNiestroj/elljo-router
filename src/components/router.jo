@@ -2,6 +2,7 @@
 
 <script>
 import { afterRender } from '@elljo/runtime'
+import generateId from '../utils/id'
 
 const router = window.__elljo_router__
 
@@ -9,7 +10,8 @@ if(!router) {
   // TODO: Add better error
   console.error("no router")
 }
-const id = Math.random().toString(36).substring(9)
+const id = generateId(4)
+
 let currentRoute = null
 
 const routeChanged = (route) => {
