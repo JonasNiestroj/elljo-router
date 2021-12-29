@@ -200,13 +200,25 @@ target.appendChild(element_1);
 let currentRoute = null;
 
 function Router(routes) {
+  const parsedRoutes = [];
 
   this.addRouteChangedCallback = (callback) => {
   };
 
   this.getRouteFromPath = (path) => {
-    for (let route of routes) {
-      if (route.url === path) {
+    const splittedPath = path.split("/");
+    for (let route of parsedRoutes) {
+      console.log(route.parts, splittedPath);
+      if (route.parts.length !== splittedPath.length) {
+        continue
+      }
+      let matchesPath = true;
+      for (let [index, part] of route.parts.entries()) {
+        if (part.part !== splittedPath[index] && !part.paramName) {
+          matchesPath = false;
+        }
+      }
+      if (matchesPath) {
         return route
       }
     }
@@ -224,6 +236,27 @@ function Router(routes) {
   let newRoute = this.getRouteFromPath(document.location.pathname);
   currentRoute = newRoute;
   
+  routes.forEach(route => {
+    const urlParts = route.url.split("/");
+    const parsedRoute = { ...route };
+    const parts = [];
+    urlParts.forEach(part => {
+      if (!part.startsWith("{") && !part.endsWith("}")) {
+        parts.push({
+          part
+        });
+      } else {
+        const paramName = part.replace("{", "").replace("}", "");
+        parts.push({
+          part,
+          paramName
+        });
+      }
+    });
+    parsedRoute.parts = parts;
+    parsedRoutes.push(parsedRoute);
+  });
+
   window.__elljo_router__ = this;
 }
 
