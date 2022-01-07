@@ -208,7 +208,6 @@ function Router(routes) {
   this.getRouteFromPath = (path) => {
     const splittedPath = path.split("/");
     for (let route of parsedRoutes) {
-      console.log(route.parts, splittedPath);
       if (route.parts.length !== splittedPath.length) {
         continue
       }
